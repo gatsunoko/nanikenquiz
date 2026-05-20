@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>これって何県？ - 都道府県雑学クイズゲーム</title>
+  <meta name="description" content="全国47都道府県の観光地、特産グルメ、日本一記録など、様々な「これって何県？」を当てる100問のクイズゲーム！正解して美しい御朱印スタンプを集めよう！">
+  
+  <!-- SEO & Social Icons -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🗾</text></svg>">
+  
+  <!-- Stylesheet -->
+  <link rel="stylesheet" href="style.css">
+  
+  <!-- FontAwesome for icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+
+  <!-- Background Decorative Canvas for Particles -->
+  <canvas id="canvas-particles"></canvas>
+  <div class="bg-pattern"></div>
+
+  <!-- Primary Application Layout -->
+  <div class="app-container">
+    
+    <!-- Application Header -->
+    <header class="app-header">
+      <div class="logo-container" id="header-logo">
+        <span class="logo-sub">Prefecture Trivia Quiz</span>
+        <h1 class="logo-main" id="app-title-h1">これって何県？</h1>
+      </div>
+    </header>
+
+    <!-- Main Dynamic Content Area (SPA Screens) -->
+    <main class="app-main">
+
+      <!-- ==========================================
+           SCREEN 1: HOME / MAIN MENU
+           ========================================== -->
+      <section id="home-screen" class="screen active">
+        <div class="glass-card">
+          <div class="home-intro">
+            <h2 class="float-anim">「これって何県？」に挑む</h2>
+            <p>日本全国の観光地、美味しい特産品、面白い日本一記録などの雑学クイズ！5つの選択肢から正しい都道府県を当てましょう。正解すると、その県の「御朱印スタンプ」が獲得できます！</p>
+          </div>
+
+          <!-- Player Stat Summary Drawer -->
+          <div class="home-stats-preview">
+            <div class="stat-item" title="全47都道府県の御朱印集めの進捗">
+              <div class="stat-val" id="home-stamp-count">0 / 47</div>
+              <div class="stat-lbl">御朱印帳</div>
+            </div>
+            <div class="stat-item" title="ゲームで獲得した最高スコア">
+              <div class="stat-val" id="home-high-score">0</div>
+              <div class="stat-lbl">ハイスコア</div>
+            </div>
+            <div class="stat-item" title="これまでの総クイズ解答数">
+              <div class="stat-val" id="home-total-answered">0</div>
+              <div class="stat-lbl">総解答数</div>
+            </div>
+          </div>
+
+          <!-- Mode Choices -->
+          <div class="mode-grid">
+            <!-- Mode 1: Quick -->
+            <button class="mode-card" data-mode="quick" id="btn-mode-quick">
+              <div class="mode-icon"><i class="fa-solid fa-bolt"></i></div>
+              <div class="mode-details">
+                <h3>おてがる10問</h3>
+                <p>100問の中からランダムに10問出題。サクッと遊びたい時に。</p>
+              </div>
+            </button>
+
+            <!-- Mode 2: Challenger -->
+            <button class="mode-card" data-mode="challenger" id="btn-mode-challenger">
+              <div class="mode-icon"><i class="fa-solid fa-trophy"></i></div>
+              <div class="mode-details">
+                <h3>じっくり30問</h3>
+                <p>じっくり30問に挑戦。都道府県マスターへの登竜門！</p>
+              </div>
+            </button>
+
+            <!-- Mode 3: Endless -->
+            <button class="mode-card" data-mode="endless" id="btn-mode-endless">
+              <div class="mode-icon"><i class="fa-solid fa-heart-pulse"></i></div>
+              <div class="mode-details">
+                <h3>全問挑戦（ライフ制）</h3>
+                <p>ライフが3つ。間違えると減少し、全問制覇を目指す限界突破モード！</p>
+              </div>
+            </button>
+          </div>
+
+          <!-- Additional Actions -->
+          <div class="home-nav-actions">
+            <button class="btn btn-secondary" id="btn-go-stamps">
+              <i class="fa-solid fa-stamp"></i> 御朱印帳（コレクション）を開く
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SCREEN 2: QUIZ INTERACTIVE INTERFACE
+           ========================================== -->
+      <section id="quiz-screen" class="screen">
+        <div class="glass-card">
+          <!-- Live Stats Header -->
+          <div class="quiz-header-bar">
+            <!-- Combo indicator -->
+            <div class="combo-badge" id="quiz-combo-badge">
+              <i class="fa-solid fa-fire"></i> <span id="quiz-combo-num">0</span> COMBO!
+            </div>
+            
+            <!-- Score & Lives container -->
+            <div style="display: flex; align-items: center; gap: 1rem;">
+              <!-- Lives (Hidden unless Endless) -->
+              <div class="lives-container" id="quiz-lives-container" style="display: none;">
+                <i class="fa-solid fa-heart life-heart" data-life="1"></i>
+                <i class="fa-solid fa-heart life-heart" data-life="2"></i>
+                <i class="fa-solid fa-heart life-heart" data-life="3"></i>
+              </div>
+              
+              <!-- Points -->
+              <div class="score-badge">
+                得点: <span id="quiz-score-val" style="font-weight: 800;">0</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Progress Bar Indicator -->
+          <div class="progress-container">
+            <div class="progress-info">
+              <span id="quiz-mode-name">おてがる10問</span>
+              <span class="progress-num">第 <span id="quiz-current-idx">1</span> / <span id="quiz-total-idx">10</span> 問</span>
+            </div>
+            <div class="progress-bar-outer">
+              <div class="progress-bar-inner" id="quiz-progress-bar"></div>
+            </div>
+          </div>
+
+          <!-- The Question Card -->
+          <div class="question-card" id="quiz-question-card">
+            <span class="question-prefecture-badge" id="quiz-pref-hint-region">地方ヒントなし</span>
+            <h3 class="question-text" id="quiz-question-text">読み込み中...</h3>
+          </div>
+
+          <!-- Choices Container -->
+          <div class="choices-container" id="quiz-choices-container">
+            <!-- Generated dynamically via JS -->
+            <button class="choice-btn">
+              <span><span class="choice-num">1</span> 東京都</span>
+              <i class="fa-solid fa-check choice-status-icon"></i>
+            </button>
+          </div>
+
+          <!-- Explanatory Panel (hidden by default, shown after select) -->
+          <div class="explanation-panel" id="quiz-explanation-panel">
+            <div class="explanation-title" id="quiz-explanation-title">
+              <i class="fa-solid fa-circle-check"></i> <span>正解！</span>
+            </div>
+            <p class="explanation-desc" id="quiz-explanation-desc">
+              解説テキストがここに入ります。
+            </p>
+          </div>
+
+          <!-- Bottom Control Bar -->
+          <div class="quiz-actions">
+            <button class="btn btn-secondary" id="btn-quiz-hint" title="ヒントを見る">
+              <i class="fa-regular fa-lightbulb"></i> ヒント
+            </button>
+            <button class="btn btn-primary" id="btn-quiz-next" disabled>
+              次に進む <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SCREEN 3: QUIZ END RESULT SUMMARY
+           ========================================== -->
+      <section id="result-screen" class="screen">
+        <div class="glass-card result-container">
+          <div class="result-stamp-reveal">
+            <!-- Decorative outline -->
+            <div class="goshuin-seal float-anim" id="result-seal-icon" style="width: 80px; height: 80px; font-size: 2rem; border-width: 4px; opacity: 1; filter: none; margin: 0 auto 1rem;">済</div>
+          </div>
+
+          <h2 class="result-score-title" id="result-title-text">挑戦完了！</h2>
+          <div class="result-score-val" id="result-score-points">0</div>
+          <p class="result-feedback" id="result-feedback-text">素晴らしい！全問クリア！</p>
+
+          <!-- Result Details Stats Row -->
+          <div class="result-stats-row">
+            <div class="result-stat-card">
+              <div class="result-stat-val" id="result-stat-accuracy">0%</div>
+              <div class="result-stat-lbl">正解率</div>
+            </div>
+            <div class="result-stat-card">
+              <div class="result-stat-val" id="result-stat-combo">0</div>
+              <div class="result-stat-lbl">最大コンボ</div>
+            </div>
+            <div class="result-stat-card">
+              <div class="result-stat-val" id="result-stat-unlocked">0</div>
+              <div class="result-stat-lbl">新規御朱印</div>
+            </div>
+          </div>
+
+          <!-- Result Navigation Buttons -->
+          <div class="result-actions">
+            <button class="btn btn-primary" id="btn-result-replay">
+              <i class="fa-solid fa-rotate-left"></i> もう一度遊ぶ
+            </button>
+            <button class="btn btn-secondary" id="btn-result-goshuin">
+              <i class="fa-solid fa-stamp"></i> 御朱印帳を見る
+            </button>
+            <button class="btn btn-secondary full-width" id="btn-result-home">
+              <i class="fa-solid fa-house"></i> トップメニューに戻る
+            </button>
+          </div>
+
+          <!-- Share Section -->
+          <div class="share-section">
+            <h4>結果をみんなに共有する</h4>
+            <div class="share-btns">
+              <a href="#" class="share-btn x-twitter" id="btn-share-twitter" target="_blank" rel="noopener noreferrer">
+                <i class="fa-brands fa-x-twitter"></i> Xでポスト
+              </a>
+              <a href="#" class="share-btn line" id="btn-share-line" target="_blank" rel="noopener noreferrer">
+                <i class="fa-brands fa-line"></i> LINEで送る
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==========================================
+           SCREEN 4: GOSHUINCHO (STAMP BOOK COLLECTION)
+           ========================================== -->
+      <section id="stamps-screen" class="screen">
+        <div class="glass-card">
+          <div class="stamps-intro">
+            <h2>御朱印帳（都道府県コレクション）</h2>
+            <span class="stamps-progress" id="stamps-progress-badge">0 / 47</span>
+          </div>
+
+          <!-- Area filter Tabs -->
+          <div class="view-tabs">
+            <div class="view-tab active" data-region="all">すべて</div>
+            <div class="view-tab" data-region="east">東日本</div>
+            <div class="view-tab" data-region="west">西日本</div>
+          </div>
+
+          <!-- Stamps Scrolling Grid -->
+          <div class="stamps-grid-container">
+            <div class="stamps-grid" id="stamps-grid-element">
+              <!-- Loaded dynamically via JS -->
+              <!-- Sample Cell:
+              <div class="stamp-cell unlocked" title="東京都のクイズに正解して獲得！">
+                <div class="goshuin-seal">東</div>
+                <div class="stamp-pref-name">東京都</div>
+                <div class="stamp-date">26.05.20</div>
+              </div>
+              -->
+            </div>
+          </div>
+
+          <!-- Back button -->
+          <button class="btn btn-secondary" id="btn-stamps-back" style="width: 100%;">
+            <i class="fa-solid fa-arrow-left"></i> トップメニューに戻る
+          </button>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- Footer Copyright -->
+    <footer class="app-footer">
+      <p>&copy; 2026 「これって何県？」制作委員会. All rights reserved.</p>
+    </footer>
+
+  </div>
+
+  <!-- ==========================================
+       MODAL DIALOGS & OVERLAYS
+       ========================================== -->
+  
+  <!-- Hint Modal Overlay -->
+  <div class="modal-overlay" id="modal-hint">
+    <div class="modal-content">
+      <div class="modal-body">
+        <div class="modal-icon"><i class="fa-regular fa-lightbulb"></i></div>
+        <h3 class="modal-title">ヒントの神託</h3>
+        <p class="modal-desc" id="modal-hint-text">
+          ここにヒントのメッセージが入ります。
+        </p>
+        <button class="btn btn-primary modal-close-btn" id="btn-modal-hint-close">
+          心得る
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Scripts -->
+  <script src="questions.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

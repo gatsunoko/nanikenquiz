@@ -1,0 +1,1114 @@
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@300;400;500;700;900&family=Outfit:wght@300;400;600;800&display=swap');
+
+/* ==========================================================================
+   1. DESIGN SYSTEM & CSS VARIABLES
+   ========================================================================== */
+:root {
+  --font-primary: 'Noto Sans JP', sans-serif;
+  --font-accent: 'Outfit', sans-serif;
+
+  /* Premium Wa-Modern Color Palette */
+  --color-bg: #0d1117;              /* 漆黒 (Shikkoku) - Deep charcoal black */
+  --color-bg-panel: #161b22;        /* 濃藍 (Koiai) - Dark navy panel */
+  --color-primary: #1a2c42;         /* 紺青 (Konjo) - Deep indigo blue */
+  --color-accent-red: #ff3e4e;      /* 朱赤 (Shuaka) - Vibrant torii red */
+  --color-accent-red-glow: rgba(255, 62, 78, 0.4);
+  --color-gold: #e5b842;            /* 山吹色 (Yamabuki) - Premium Japanese gold */
+  --color-gold-glow: rgba(229, 184, 66, 0.3);
+  --color-success: #2ea44f;         /* 翡翠緑 (Hisui) - Rich emerald green */
+  --color-success-glow: rgba(46, 164, 79, 0.3);
+  --color-text: #f0f3f6;            /* 白磁 (Hakuji) - Warm white */
+  --color-text-subtle: #8b949e;     /* 鼠色 (Nezumiiro) - Muted slate gray */
+  --color-glass: rgba(22, 27, 34, 0.75);
+  --color-glass-light: rgba(255, 255, 255, 0.05);
+  --color-glass-border: rgba(255, 255, 255, 0.08);
+
+  /* Shadows & Blurs */
+  --shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 8px 24px rgba(0, 0, 0, 0.5);
+  --shadow-lg: 0 16px 40px rgba(0, 0, 0, 0.7), 0 0 20px rgba(229, 184, 66, 0.15);
+  --shadow-red-glow: 0 0 15px var(--color-accent-red-glow);
+  --shadow-gold-glow: 0 0 15px var(--color-gold-glow);
+  --blur-radius: 12px;
+
+  /* Border Radius */
+  --radius-sm: 6px;
+  --radius-md: 12px;
+  --radius-lg: 20px;
+  --radius-full: 9999px;
+
+  /* Transitions */
+  --transition-fast: 0.2s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --transition-normal: 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+  --transition-slow: 0.5s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* ==========================================================================
+   2. GLOBAL STYLES & RESET
+   ========================================================================== */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--font-primary);
+  background-color: var(--color-bg);
+  color: var(--color-text);
+  min-height: 100vh;
+  overflow-x: hidden;
+  position: relative;
+  line-height: 1.6;
+}
+
+/* Canvas Particle Layer Behind UI but above bg */
+#canvas-particles {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Background Thematic Patterns */
+.bg-pattern {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  opacity: 0.02;
+  pointer-events: none;
+  background-image: radial-gradient(var(--color-gold) 1px, transparent 0);
+  background-size: 24px 24px;
+  z-index: 0;
+}
+
+/* Custom Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: var(--color-bg);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--color-primary);
+  border-radius: var(--radius-full);
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-gold);
+}
+
+/* ==========================================================================
+   3. APP CONTAINER & LAYOUT
+   ========================================================================== */
+.app-container {
+  max-width: 720px;
+  margin: 0 auto;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  z-index: 2;
+  padding: 0.5rem 1rem;
+}
+
+/* Header Styles */
+.app-header {
+  text-align: center;
+  margin-bottom: 0.5rem;
+  user-select: none;
+}
+
+.logo-container {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.logo-sub {
+  font-family: var(--font-accent);
+  font-weight: 800;
+  color: var(--color-gold);
+  letter-spacing: 0.25em;
+  font-size: 0.8rem;
+  margin-bottom: 0.2rem;
+  text-transform: uppercase;
+  text-shadow: 0 0 8px var(--color-gold-glow);
+}
+
+.logo-main {
+  font-size: 1.8rem;
+  font-weight: 900;
+  color: var(--color-text);
+  letter-spacing: 0.05em;
+  position: relative;
+  display: inline-block;
+  background: linear-gradient(135deg, #ffffff 40%, var(--color-gold) 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  padding: 0 10px;
+}
+
+.logo-main::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 0;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--color-accent-red), var(--color-gold), transparent);
+}
+
+/* Main Content Area */
+.app-main {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  margin-top: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Footer Styles */
+.app-footer {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+  padding: 0.25rem 0;
+}
+
+/* ==========================================================================
+   4. SCREENS / PAGES (SPA FLOW)
+   ========================================================================== */
+.screen {
+  display: none; /* Controlled via app.js */
+  animation: fadeIn var(--transition-normal) forwards;
+}
+
+.screen.active {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Glass Card Base Style */
+.glass-card {
+  background-color: var(--color-glass);
+  backdrop-filter: blur(var(--blur-radius));
+  -webkit-backdrop-filter: blur(var(--blur-radius));
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  padding: 2rem 1.5rem;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+}
+
+.glass-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 4px;
+  height: 100%;
+  background: linear-gradient(to bottom, var(--color-accent-red), var(--color-gold));
+}
+
+/* --- SCREEN 1: HOME SCREEN --- */
+.home-intro {
+  text-align: center;
+  margin-bottom: 2rem;
+}
+
+.home-intro h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.8rem;
+  color: var(--color-gold);
+}
+
+.home-intro p {
+  color: var(--color-text-subtle);
+  font-size: 0.95rem;
+}
+
+/* Game Mode Selection Grid */
+.mode-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.mode-card {
+  background-color: var(--color-glass-light);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  position: relative;
+  text-align: left;
+}
+
+.mode-card:hover {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-gold);
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-gold-glow);
+}
+
+.mode-icon {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background-color: rgba(229, 184, 66, 0.1);
+  border: 1px solid rgba(229, 184, 66, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+  color: var(--color-gold);
+  flex-shrink: 0;
+  transition: all var(--transition-normal);
+}
+
+.mode-card:hover .mode-icon {
+  background-color: var(--color-gold);
+  color: var(--color-bg);
+  transform: rotate(10deg);
+}
+
+.mode-details h3 {
+  font-size: 1.1rem;
+  margin-bottom: 0.2rem;
+  color: var(--color-text);
+}
+
+.mode-details p {
+  font-size: 0.8rem;
+  color: var(--color-text-subtle);
+}
+
+/* Home Stats Drawer */
+.home-stats-preview {
+  display: flex;
+  justify-content: space-around;
+  background-color: rgba(0, 0, 0, 0.2);
+  border-radius: var(--radius-md);
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-val {
+  font-family: var(--font-accent);
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--color-gold);
+  text-shadow: 0 0 5px var(--color-gold-glow);
+}
+
+.stat-lbl {
+  font-size: 0.75rem;
+  color: var(--color-text-subtle);
+  margin-top: 0.2rem;
+}
+
+/* Home Navigation Buttons */
+.home-nav-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+
+/* --- SCREEN 2: QUIZ SCREEN --- */
+.quiz-header-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+
+.combo-badge {
+  background: linear-gradient(135deg, var(--color-accent-red), #ff7b00);
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--radius-full);
+  font-family: var(--font-accent);
+  font-weight: 800;
+  font-size: 0.8rem;
+  letter-spacing: 0.05em;
+  box-shadow: var(--shadow-red-glow);
+  opacity: 0; /* Only visible when combo > 1 */
+  transform: scale(0.8);
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.combo-badge.active {
+  opacity: 1;
+  transform: scale(1);
+}
+
+.score-badge {
+  font-family: var(--font-accent);
+  font-size: 1rem;
+  color: var(--color-gold);
+  font-weight: 600;
+}
+
+/* Lives / Hearts indicator for Endless Mode */
+.lives-container {
+  display: flex;
+  gap: 4px;
+  font-size: 1.1rem;
+  color: var(--color-accent-red);
+}
+
+.life-heart {
+  transition: transform var(--transition-normal);
+}
+
+.life-heart.lost {
+  color: var(--color-text-subtle);
+  transform: scale(0.8);
+  opacity: 0.5;
+}
+
+/* Progress Tracker */
+.progress-container {
+  margin-bottom: 1.5rem;
+}
+
+.progress-info {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: var(--color-text-subtle);
+  margin-bottom: 0.4rem;
+}
+
+.progress-num {
+  font-family: var(--font-accent);
+  font-weight: 600;
+}
+
+.progress-bar-outer {
+  height: 8px;
+  background-color: rgba(255, 255, 255, 0.05);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+  border: 1px solid var(--color-glass-border);
+  position: relative;
+}
+
+.progress-bar-inner {
+  height: 100%;
+  width: 0%; /* Dynamic */
+  background: linear-gradient(90deg, var(--color-accent-red), var(--color-gold));
+  border-radius: var(--radius-full);
+  transition: width var(--transition-normal);
+}
+
+/* Question Area */
+.question-card {
+  text-align: center;
+  margin-bottom: 0.75rem;
+  animation: slideIn var(--transition-normal) forwards;
+}
+
+.question-prefecture-badge {
+  display: inline-block;
+  font-size: 0.75rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+  background-color: rgba(255, 255, 255, 0.1);
+  color: var(--color-text-subtle);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.05em;
+}
+
+.question-text {
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1.5;
+  color: var(--color-text);
+  word-break: keep-all;
+}
+
+/* Choices Layout */
+.choices-container {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  margin-bottom: 0.6rem;
+}
+
+.choice-btn {
+  background-color: var(--color-glass-light);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
+  padding: 0.6rem 1rem;
+  color: var(--color-text);
+  font-size: 1.05rem;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  outline: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.choice-btn:hover:not([disabled]) {
+  background-color: rgba(255, 255, 255, 0.08);
+  border-color: var(--color-gold);
+  padding-left: 1.75rem;
+  box-shadow: 0 0 10px rgba(229, 184, 66, 0.1);
+}
+
+.choice-btn:active:not([disabled]) {
+  transform: scale(0.98);
+}
+
+.choice-num {
+  font-family: var(--font-accent);
+  font-weight: 800;
+  color: var(--color-gold);
+  margin-right: 0.75rem;
+  font-size: 1.1rem;
+}
+
+.choice-status-icon {
+  font-size: 1.2rem;
+  opacity: 0;
+  transform: scale(0.5);
+  transition: all var(--transition-fast);
+}
+
+/* Quiz Answer States */
+.choice-btn.correct {
+  background-color: var(--color-success-glow) !important;
+  border-color: var(--color-success) !important;
+  color: var(--color-text) !important;
+  font-weight: 700;
+  box-shadow: 0 0 15px var(--color-success-glow);
+}
+
+.choice-btn.correct .choice-status-icon {
+  opacity: 1;
+  transform: scale(1);
+  color: var(--color-success);
+}
+
+.choice-btn.incorrect {
+  background-color: var(--color-accent-red-glow) !important;
+  border-color: var(--color-accent-red) !important;
+  opacity: 0.8;
+}
+
+.choice-btn.incorrect .choice-status-icon {
+  opacity: 1;
+  transform: scale(1);
+  color: var(--color-accent-red);
+}
+
+.choice-btn.dimmed {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* Quiz Controls */
+.quiz-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+/* --- MODALS & NOTIFICATIONS --- */
+.explanation-panel {
+  background-color: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem 1rem;
+  margin-top: 0.6rem;
+  animation: slideIn var(--transition-normal) forwards;
+  display: none; /* Toggled on correct/wrong answers */
+}
+
+.explanation-title {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.95rem;
+  margin-bottom: 0.5rem;
+}
+
+.explanation-title.correct-text {
+  color: var(--color-success);
+}
+
+.explanation-title.incorrect-text {
+  color: var(--color-accent-red);
+}
+
+.explanation-desc {
+  font-size: 0.85rem;
+  color: var(--color-text-subtle);
+  line-height: 1.5;
+}
+
+/* --- SCREEN 3: RESULT SCREEN --- */
+.result-container {
+  text-align: center;
+}
+
+.result-stamp-reveal {
+  margin-bottom: 1.5rem;
+  position: relative;
+  display: inline-block;
+}
+
+.result-score-title {
+  font-size: 1.35rem;
+  margin-bottom: 0.5rem;
+  color: var(--color-text-subtle);
+}
+
+.result-score-val {
+  font-family: var(--font-accent);
+  font-size: 3.5rem;
+  font-weight: 900;
+  color: var(--color-gold);
+  line-height: 1;
+  margin-bottom: 0.5rem;
+  text-shadow: 0 0 15px var(--color-gold-glow);
+}
+
+.result-feedback {
+  font-size: 1.1rem;
+  margin-bottom: 2rem;
+  color: var(--color-text);
+  font-weight: 600;
+}
+
+/* Result Stats Row */
+.result-stats-row {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+  margin-bottom: 2rem;
+}
+
+.result-stat-card {
+  background-color: var(--color-glass-light);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
+  padding: 0.75rem;
+}
+
+.result-stat-val {
+  font-family: var(--font-accent);
+  font-size: 1.25rem;
+  font-weight: 800;
+  color: var(--color-text);
+}
+
+.result-stat-lbl {
+  font-size: 0.7rem;
+  color: var(--color-text-subtle);
+  margin-top: 0.1rem;
+}
+
+.result-actions {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.8rem;
+}
+
+@media(min-width: 480px) {
+  .result-actions {
+    grid-template-columns: 1fr 1fr;
+  }
+  .result-actions .full-width {
+    grid-column: span 2;
+  }
+}
+
+/* Share Section */
+.share-section {
+  margin-top: 2rem;
+  border-top: 1px dashed var(--color-glass-border);
+  padding-top: 1.5rem;
+}
+
+.share-section h4 {
+  font-size: 0.85rem;
+  color: var(--color-text-subtle);
+  margin-bottom: 0.8rem;
+  letter-spacing: 0.1em;
+}
+
+.share-btns {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.share-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.8rem;
+  padding: 0.5rem 1rem;
+  border-radius: var(--radius-full);
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  transition: transform var(--transition-fast);
+}
+
+.share-btn:hover {
+  transform: translateY(-2px);
+}
+
+.share-btn.x-twitter {
+  background-color: #000000;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.share-btn.line {
+  background-color: #06c755;
+}
+
+/* --- SCREEN 4: GOSHUINCHO (STAMP BOOK) SCREEN --- */
+.stamps-intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.stamps-intro h2 {
+  font-size: 1.3rem;
+  color: var(--color-gold);
+}
+
+.stamps-progress {
+  font-family: var(--font-accent);
+  font-size: 0.9rem;
+  font-weight: 700;
+  background-color: rgba(229, 184, 66, 0.1);
+  color: var(--color-gold);
+  border: 1px solid rgba(229, 184, 66, 0.3);
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--radius-sm);
+}
+
+/* Map / List View Toggle */
+.view-tabs {
+  display: flex;
+  background-color: rgba(0, 0, 0, 0.3);
+  border-radius: var(--radius-md);
+  padding: 0.25rem;
+  margin-bottom: 1.5rem;
+  border: 1px solid var(--color-glass-border);
+}
+
+.view-tab {
+  flex-grow: 1;
+  text-align: center;
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  color: var(--color-text-subtle);
+  user-select: none;
+}
+
+.view-tab.active {
+  background-color: var(--color-primary);
+  color: var(--color-text);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Stamp Grid View */
+.stamps-grid-container {
+  max-height: 480px;
+  overflow-y: auto;
+  padding-right: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.stamps-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 0.75rem;
+}
+
+@media(min-width: 480px) {
+  .stamps-grid {
+    grid-template-columns: repeat(4, 1fr);
+  }
+}
+
+@media(min-width: 640px) {
+  .stamps-grid {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}
+
+.stamp-cell {
+  aspect-ratio: 1;
+  background-color: var(--color-glass-light);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  position: relative;
+  transition: all var(--transition-normal);
+  cursor: help;
+}
+
+.stamp-cell.unlocked {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: rgba(229, 184, 66, 0.4);
+}
+
+.stamp-cell.unlocked:hover {
+  transform: scale(1.05);
+  border-color: var(--color-gold);
+  box-shadow: var(--shadow-gold-glow);
+}
+
+/* Beautiful Goshuin-style Red Stamp */
+.goshuin-seal {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2.5px double var(--color-accent-red);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  font-family: 'Noto Sans JP', sans-serif;
+  font-weight: 900;
+  font-size: 1.1rem;
+  color: var(--color-accent-red);
+  background-color: rgba(255, 62, 78, 0.02);
+  user-select: none;
+  opacity: 0.15; /* Locked state */
+  filter: grayscale(1);
+  transition: all var(--transition-slow);
+}
+
+.stamp-cell.unlocked .goshuin-seal {
+  opacity: 1;
+  filter: grayscale(0) drop-shadow(0 0 4px rgba(255, 62, 78, 0.3));
+  animation: stampImpact 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+.goshuin-seal::before {
+  content: "";
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  right: 1px;
+  bottom: 1px;
+  border: 0.8px solid var(--color-accent-red);
+  border-radius: 50%;
+  pointer-events: none;
+}
+
+.stamp-pref-name {
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--color-text-subtle);
+  margin-top: 0.4rem;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+.stamp-cell.unlocked .stamp-pref-name {
+  color: var(--color-text);
+}
+
+/* Stamp Detail / Tooltip indicator on hover */
+.stamp-date {
+  font-size: 0.55rem;
+  color: var(--color-gold);
+  font-family: var(--font-accent);
+  position: absolute;
+  bottom: 4px;
+  opacity: 0;
+  transform: translateY(2px);
+  transition: all var(--transition-fast);
+}
+
+.stamp-cell.unlocked:hover .stamp-date {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* ==========================================================================
+   5. INTERACTIVE BUTTONS & CONTROLS
+   ========================================================================== */
+.btn {
+  font-family: var(--font-primary);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding: 0.85rem 1.75rem;
+  font-size: 1rem;
+  font-weight: 700;
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  outline: none;
+  user-select: none;
+  text-decoration: none;
+}
+
+/* Primary Button: Japanese Gold Leaf Theme */
+.btn-primary {
+  background: linear-gradient(135deg, var(--color-gold), #c9962a);
+  color: var(--color-bg);
+  border: none;
+  box-shadow: 0 4px 12px rgba(229, 184, 66, 0.2);
+}
+
+.btn-primary:hover:not([disabled]) {
+  background: linear-gradient(135deg, #ffd700, var(--color-gold));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-gold-glow), 0 6px 16px rgba(229, 184, 66, 0.3);
+}
+
+.btn-primary:active:not([disabled]) {
+  transform: translateY(1px);
+}
+
+/* Secondary Button: Premium Glass Outline Theme */
+.btn-secondary {
+  background-color: transparent;
+  color: var(--color-text);
+  border: 1px solid var(--color-glass-border);
+}
+
+.btn-secondary:hover:not([disabled]) {
+  background-color: rgba(255, 255, 255, 0.05);
+  border-color: var(--color-text-subtle);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active:not([disabled]) {
+  transform: translateY(1px);
+}
+
+/* Accent Button: Torii Crimson Theme */
+.btn-accent {
+  background: linear-gradient(135deg, var(--color-accent-red), #d62232);
+  color: #ffffff;
+  border: none;
+  box-shadow: 0 4px 12px rgba(255, 62, 78, 0.2);
+}
+
+.btn-accent:hover:not([disabled]) {
+  background: linear-gradient(135deg, #ff5e6c, var(--color-accent-red));
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-red-glow), 0 6px 16px rgba(255, 62, 78, 0.3);
+}
+
+/* Utility buttons */
+.btn-icon-only {
+  width: 44px;
+  height: 44px;
+  border-radius: var(--radius-md);
+  padding: 0;
+}
+
+.btn[disabled] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+/* ==========================================================================
+   6. DIALOGS & OVERLAYS
+   ========================================================================== */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  z-index: 100;
+  display: none; /* Managed in app.js */
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  animation: fadeIn var(--transition-fast) forwards;
+}
+
+.modal-overlay.active {
+  display: flex;
+}
+
+.modal-content {
+  background-color: var(--color-bg-panel);
+  border: 1px solid var(--color-glass-border);
+  border-radius: var(--radius-lg);
+  max-width: 480px;
+  width: 100%;
+  box-shadow: var(--shadow-lg);
+  position: relative;
+  overflow: hidden;
+  animation: zoomIn var(--transition-normal) forwards;
+}
+
+.modal-content::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-accent-red), var(--color-gold));
+}
+
+.modal-body {
+  padding: 2rem 1.5rem;
+  text-align: center;
+}
+
+.modal-icon {
+  font-size: 3rem;
+  color: var(--color-gold);
+  margin-bottom: 1rem;
+  text-shadow: 0 0 10px var(--color-gold-glow);
+}
+
+.modal-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  margin-bottom: 0.8rem;
+  color: var(--color-text);
+}
+
+.modal-desc {
+  font-size: 0.95rem;
+  color: var(--color-text-subtle);
+  margin-bottom: 1.5rem;
+  line-height: 1.6;
+}
+
+.modal-close-btn {
+  width: 100%;
+}
+
+/* ==========================================================================
+   7. KEYFRAME ANIMATIONS
+   ========================================================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes zoomIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes stampImpact {
+  0% {
+    opacity: 0;
+    transform: scale(3) rotate(-30deg);
+    filter: blur(2px) grayscale(0.5);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(0.9) rotate(5deg);
+    filter: blur(0) grayscale(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+/* Screen Shake (for wrong answers) */
+.shake-anim {
+  animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+}
+
+@keyframes shake {
+  10%, 90% { transform: translate3d(-1px, 0, 0); }
+  20%, 80% { transform: translate3d(2px, 0, 0); }
+  30%, 50%, 70% { transform: translate3d(-4px, 0, 0); }
+  40%, 60% { transform: translate3d(4px, 0, 0); }
+}
+
+/* Floating Animation (decorations) */
+.float-anim {
+  animation: float 4s ease-in-out infinite;
+}
+
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+  100% { transform: translateY(0px); }
+}
+
+/* Quiz Screen Specific Glass Card Padding Adjustment */
+#quiz-screen .glass-card {
+  padding: 1.25rem 1.25rem;
+}
