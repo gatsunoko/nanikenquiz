@@ -440,12 +440,18 @@ body {
 }
 
 .question-text {
-  font-size: 1.35rem;
+  font-size: 1.15rem;
   font-weight: 700;
   line-height: 1.5;
   color: var(--color-text);
   word-break: break-all;
   overflow-wrap: break-word;
+}
+
+@media (min-width: 480px) {
+  .question-text {
+    font-size: 1.35rem;
+  }
 }
 
 /* Choices Layout */
