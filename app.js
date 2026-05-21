@@ -282,10 +282,14 @@ document.addEventListener('DOMContentLoaded', () => {
       
       // 桜が画面外に出たら少しリサイクル
       if (this.type === 'sakura' && this.y > canvas.height) {
-        this.y = -10;
-        this.x = Math.random() * canvas.width;
-        this.opacity = Math.random() * 0.3 + 0.6;
-        this.speedY = Math.random() * 1.5 + 1.0;
+        if (isRainingSakura) {
+          this.y = -10;
+          this.x = Math.random() * canvas.width;
+          this.opacity = Math.random() * 0.3 + 0.6;
+          this.speedY = Math.random() * 1.5 + 1.0;
+        } else {
+          this.opacity = 0; // すぐに消滅させる
+        }
       }
     }
 
@@ -585,7 +589,7 @@ document.addEventListener('DOMContentLoaded', () => {
         spawnSplash('confetti'); // 5コンボ以上でカラフル紙吹雪
         sound.combo(state.combo);
       } else {
-        spawnSplash('sakura');   // 通常は桜吹雪
+        spawnSplash('confetti'); // 通常もカラフル紙吹雪にする（桜はクイズ画面から排除）
       }
 
       // コンボバッジ表示
