@@ -444,6 +444,7 @@ body {
   font-weight: 700;
   line-height: 1.5;
   color: var(--color-text);
+  word-break: break-all;
   overflow-wrap: break-word;
 }
 
